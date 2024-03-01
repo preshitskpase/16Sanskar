@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+    integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#myTable").DataTable();
+    });
+  </script>
+
+  <style>
+    * {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --orange: #f47c00;
+      --white: #fff;
+      --gray: #f5f5f5;
+      --black1: #222;
+      --black2: #999;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container-fluids {
+      position: relative;
+      width: 100%;
+    }
+
+    /* =============== navigations ================ */
+    .navigations {
+      position: fixed;
+      width: 300px;
+      height: 100%;
+      background: var(--orange);
+      border-left: 10px solid var(--orange);
+      transition: 0.5s;
+      overflow: hidden;
+    }
+
+    .navigations.actives {
+      width: 80px;
+    }
+
+    .navigations ul {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .navigations ul li {
+      position: relative;
+      width: 100%;
+      list-style: none;
+
+      border-radius: 25px;
+    }
+
+    .navigations ul li:hover,
+    .navigations ul li.hovered {
+      background-color: var(--white);
+    }
+
+    .navigations ul li:nth-child(1) {
+      margin-bottom: 40px;
+      pointer-events: none;
+    }
+
+    .navigations ul li a {
+      position: relative;
+      display: block;
+      width: 100%;
+      display: flex;
+      text-decoration: none;
+      color: var(--white);
+    }
+
+    .navigations ul li:hover a,
+    .navigations ul li.hovered a {
+      color: var(--orange);
+    }
+
+    .navigations ul li a .icon {
+      position: relative;
+      display: block;
+      min-width: 60px;
+      height: 60px;
+      line-height: 75px;
+      text-align: center;
+    }
+
+    .navigations ul li a .icon ion-icon {
+      font-size: 1.75rem;
+    }
+
+    .navigations ul li a .title {
+      position: relative;
+      display: block;
+      padding: 0 10px;
+      height: 60px;
+      line-height: 60px;
+      text-align: start;
+      white-space: nowrap;
+    }
+
+
+    .navigations ul li:hover a::after,
+    .navigations ul li.hovered a::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: -50px;
+      width: 50px;
+      height: 50px;
+      background-color: transparent;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .mains {
+      position: absolute;
+      width: calc(100% - 300px);
+      left: 300px;
+      min-height: 100vh;
+      background: var(--white);
+      transition: 0.5s;
+    }
+
+    .mains.actives {
+      width: calc(100% - 80px);
+      left: 80px;
+    }
+
+    .topbars {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .toggles {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      cursor: pointer;
+    }
+
+
+
+    @media (max-width: 991px) {
+      .navigations {
+        left: -300px;
+      }
+
+      .navigations.actives {
+        width: 300px;
+        left: 0;
+      }
+
+      .mains {
+        width: 100%;
+        left: 0;
+      }
+
+      .mains.actives {
+        left: 300px;
+      }
+
+    }
+
+    #mycharts {
+      width: 500px;
+      height: 300px;
+    }
+
+
+
+    @media (max-width: 480px) {
+
+      .users {
+        min-width: 40px;
+      }
+
+      .navigations {
+        width: 100%;
+        left: -100%;
+        z-index: 1000;
+      }
+
+      .navigations.actives {
+        width: 100%;
+        left: 0;
+      }
+
+      .toggles {
+        z-index: 10001;
+      }
+
+      .mains.actives .toggles {
+        color: #fff;
+        position: fixed;
+        right: 0;
+        left: initial;
+      }
+    }
+
+    #producttable thead tr th {
+      background-color: #f47c00;
+      color: #fff;
+    }
+
+    #producttable tbody tr:nth-child(even) td {
+      /* padding: 5px; */
+      background-color: #F6A36A !important;
+      color: #fff !important;
+    }
+
+    #producttable tbody tr:nth-child(odd) td {
+      color: #F6A36A;
+
+    }
+  </style>
+
+  <%- include('../partials/head'); %>
+</head>
+
+<body>
+  <!-- =============== navigations ================ -->
+  <div class="container-fluids">
+    <%- include('../partials/adminav.ejs')%>
+
+      <!-- ========================= Main ==================== -->
+      <div class="mains">
+        <div class="topbars">
+          <div class="toggles">
+            <ion-icon name="menu-outline"></ion-icon>
+          </div>
+
+        </div>
+
+        <div id="datatable">
+
+          <table id="myTable" class="display nowrap" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Brand Name</th>
+                <th>Product Category</th>
+                <th>Product Image</th>
+                <th>Product on website</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.forEach((product,index)=> {%>
+                <tr class="table">
+                  <td>
+                    <%= product.vproduct_name%>
+                  </td>
+                  <td>
+                    <%= product.vproduct_price%>
+                  </td>
+                  <td>
+                    <%= product.vproduct_brandnamae%>
+                  <td>
+                    <%= product.vproduct_category%>
+                  </td>
+                  <td> <img src="/uploads/<%= product.vproduct_imag%>" alt=" " style="width: 5vw; height: 8vh;"></td>
+                  <td>
+                      <input type="text" name="pid" id="pId<%=index%>" value="<%= product._id%>" class="d-none ">
+                    <button  id="show<%=index%>" type="button"
+                      class="btn showbtn" style="background-color: #f47c00; color: #fff;" data-bs-toggle="modal"
+                      data-bs-target="#example<%=index%>"><%= product.vproduct_show%></button>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="example<%=index%>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                      aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Confirm Changes:  -->
+                          <div class=" modal-footer">
+                            Confirm Changes  <button type="button" class="btn btn-secondary ms-5" data-bs-dismiss="modal">Decline </button>
+                            <button type="button" class="btn acceptbtn" data-bs-dismiss="modal" id="accept<%=index%>"
+                              style="background-color: #f47c00; color:#fff">Accept</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <%})%>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+
+  <!-- =========== Scripts =========  -->
+  <script>
+
+
+    // function showHide(button, productId) {
+
+      document.querySelectorAll('.acceptbtn').forEach((button, index) => {
+        button.addEventListener('click',async function () {
+          const show = document.getElementById('show' + index);
+          const pId = document.getElementById('pId' + index).value;
+          var sbtn=show.innerHTML;
+          if (show.innerHTML === 'Shown') {
+            show.innerHTML = 'Hided';
+            sbtn='Hided'
+          } else {
+            show.innerHTML = 'Shown';
+            sbtn='Shown'
+          }
+          try{
+          var data=await fetch(`/adminLogin/productShow/${sbtn}/${pId}`,{method:'GET'});
+          console.log("data inside admin script");
+          console.log(data);
+          }catch(err){
+            console.log(err);
+          }
+
+        
+
+
+        })
+      })
+
+
+      // console.log('inside Show Hid')
+      // if(button.innerHTML==='Show')
+      // {
+      //   button.innerHTML='Hide';
+      // }else{
+      //   button.innerHTML='Show';
+      // }
+      // var show_btn=document.querySelectorAll('.showbtn')
+      // sh
+
+
+    // }
+
+    // add hovered class to selected list item
+
+    let list = document.querySelectorAll(".navigations li");
+
+    function activeLink() {
+      list.forEach((item) => {
+        item.classList.remove("hovered");
+      });
+      this.classList.add("hovered");
+    }
+
+    list.forEach((item) => item.addEventListener("mouseover", activeLink));
+
+    // Menu toggles
+    let toggles = document.querySelector(".toggles");
+    let navigations = document.querySelector(".navigations");
+    let mains = document.querySelector(".mains");
+
+    toggles.onclick = function () {
+      navigations.classList.toggle("actives");
+      mains.classList.toggle("actives");
+    };
+
+  </script>
+  <!-- ====== ionicons ======= -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
